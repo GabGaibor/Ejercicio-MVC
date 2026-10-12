@@ -42,5 +42,6 @@ Abre http://localhost:8080. Consola de la base de datos: http://localhost:8080/h
 | Zoila Baca | 300 | 0% | 0.00 |
 
 ## Links
-- Deploy: _(pegar URL de Render)_
-- Video: _(pegar URL de YouTube)_
+- Deploy: https://minicore-gabriel.onrender.com
+
+- Video: https://youtu.be/V6v9NTh0xrs
