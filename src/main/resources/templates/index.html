@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiniCore Comisiones</title>
+    <style>
+        :root { --bg:#f5f6f8; --card:#fff; --text:#1f2933; --muted:#6b7280; --accent:#2563eb; --border:#e5e7eb; }
+        * { box-sizing: border-box; }
+        body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+        .wrap { max-width: 900px; margin: 0 auto; padding: 32px 16px; }
+        h1 { margin: 0 0 4px; font-size: 1.6rem; }
+        .sub { color: var(--muted); margin: 0 0 24px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+        label { display: flex; flex-direction: column; font-size: .85rem; color: var(--muted); gap: 4px; }
+        input[type=date] { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+        button { padding: 9px 18px; background: var(--accent); color: #fff; border: 0; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { font-size: .8rem; text-transform: uppercase; color: var(--muted); }
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+        tfoot td { font-weight: 600; border-bottom: 0; }
+        .error { color: #b91c1c; }
+        h2 { font-size: 1.05rem; margin: 0 0 12px; }
+        .table-scroll { overflow-x: auto; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>MiniCore · Cálculo de comisiones</h1>
+    <p class="sub">Selecciona un rango de fechas para calcular la comisión de cada vendedor.</p>
+
+    <div class="card">
+        <form method="get" action="/">
+            <label>Fecha inicio
+                <input type="date" name="inicio" th:value="${inicio}" required>
+            </label>
+            <label>Fecha fin
+                <input type="date" name="fin" th:value="${fin}" required>
+            </label>
+            <button type="submit">Calcular</button>
+        </form>
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+    </div>
+
+    <div class="card" th:if="${resultados}">
+        <h2>Resultados del <span th:text="${inicio}"></span> al <span th:text="${fin}"></span></h2>
+        <div class="table-scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th>Vendedor</th>
+                    <th class="num"># Ventas</th>
+                    <th class="num">Total vendido</th>
+                    <th class="num">% Regla</th>
+                    <th class="num">Comisión</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${resultados}">
+                    <td th:text="${r.vendedor}"></td>
+                    <td class="num" th:text="${r.numeroVentas}"></td>
+                    <td class="num" th:text="${'$' + #numbers.formatDecimal(r.totalVentas, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td class="num" th:text="${r.porcentaje + '%'}"></td>
+                    <td class="num" th:text="${'$' + #numbers.formatDecimal(r.comision, 1, 'COMMA', 2, 'POINT')}"></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="4">Total comisiones</td>
+                    <td class="num" th:text="${'$' + #numbers.formatDecimal(totalComisiones, 1, 'COMMA', 2, 'POINT')}"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Reglas de comisión</h2>
+        <table>
+            <thead><tr><th>Monto mínimo</th><th class="num">Porcentaje</th></tr></thead>
+            <tbody>
+            <tr th:each="regla : ${reglas}">
+                <td th:text="${'≥ $' + #numbers.formatDecimal(regla.montoMinimo, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td class="num" th:text="${regla.porcentaje + '%'}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
